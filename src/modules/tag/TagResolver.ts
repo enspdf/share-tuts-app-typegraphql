@@ -9,6 +9,16 @@ export class TagResolver {
         return await Tag.find();
     }
 
+    @Query(returns => Tag)
+    async getTagById(@Arg("tagId") tagId: string): Promise<Tag> {
+        const tag: Tag = await Tag.findOne({ where: { id: tagId } });
+        if (!tag) {
+            throw new Error("User Not Found");
+        }
+
+        return tag;
+    }
+
     @Mutation(returns => Tag)
     async createTag(@Arg("name") name: string): Promise<Tag> {
         return await Tag.create({ name }).save();

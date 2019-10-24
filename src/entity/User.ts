@@ -2,18 +2,24 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, BeforeIn
 import { Post } from "./Post";
 
 import * as bcrypt from "bcryptjs";
+import { ObjectType, Field, ID } from "type-graphql";
 
 @Entity("users")
+@ObjectType()
 export class User extends BaseEntity {
+    @Field(type => ID)
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
+    @Field()
     @Column("varchar")
     firstName: string;
 
+    @Field()
     @Column("varchar")
     lastName: string;
 
+    @Field()
     @Column("varchar", { length: 255, unique: true })
     email: string;
 
@@ -28,6 +34,9 @@ export class User extends BaseEntity {
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     creationDate: Date;
+
+    @Column("int", { default: 0 })
+    tokenVersion: number;
 
     @BeforeInsert()
     async hashPassword() {

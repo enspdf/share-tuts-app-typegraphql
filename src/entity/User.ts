@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, BeforeInsert } from "typeorm";
 import { Post } from "./Post";
 
-import * as bcrypt from "bcryptjs";
 import { ObjectType, Field, ID } from "type-graphql";
 
 @Entity("users")
@@ -38,9 +37,4 @@ export class User extends BaseEntity {
 
     @Column("int", { default: 0 })
     tokenVersion: number;
-
-    @BeforeInsert()
-    async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 10);
-    }
 }

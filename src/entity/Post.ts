@@ -1,11 +1,7 @@
+import { PostType } from './../modules/post/types/PostType';
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from "typeorm";
 import { User } from "./User";
 import { Tag } from "./Tag";
-
-enum PostType {
-    Post = "Post",
-    Video = "Video"
-}
 
 @Entity("posts")
 export class Post extends BaseEntity {
@@ -18,7 +14,7 @@ export class Post extends BaseEntity {
     @Column("text")
     description: string;
 
-    @Column("text")
+    @Column({ type: "enum", enum: PostType, default: PostType.Post })
     type: PostType;
 
     @Column("text")

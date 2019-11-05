@@ -1,27 +1,24 @@
-import { createAccessToken } from './../../utils/Auth';
-import { Context } from './../../utils/Context';
+import { isAuth } from './../../middleware/IsAuthMiddleware';
+import { compare, hash } from 'bcryptjs';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+
+import { User } from '../../entity/User';
+import { createAccessToken } from '../../utils/Auth';
+import { Context } from '../../utils/Context';
 import { LoginResponse } from './types/LoginResponse';
 import { UserInput } from './types/UserInput';
-import { Resolver, Mutation, Arg, Query, Ctx } from "type-graphql";
-import { User } from "../../entity/User";
-import { hash, compare } from "bcryptjs";
 
 @Resolver(of => User)
 export class UserResolver {
-    @Query(returns => [User])
-    async getUsers(): Promise<User[]> {
-        return await User.find();
-    }
-
-    @Query(returns => User)
-    async getUserById(@Arg("userId") userId: string): Promise<User> {
-        const user: User = await User.findOne({ where: { id: userId } })
-
-        if (!user) {
-            throw new Error("User Not Found");
+    @Query(returns => User, { nullable: true })
+    @UseMiddleware(isAuth)
+    async profile(@Ctx() { payload }: Context): Promise<User | null> {
+        try {
+            return await User.findOne(payload!.userId);
+        } catch (err) {
+            console.log(err);
+            return null;
         }
-
-        return user;
     }
 
     @Mutation(returns => Boolean)

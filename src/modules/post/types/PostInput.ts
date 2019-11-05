@@ -14,4 +14,7 @@ export class PostInput {
 
     @Field(type => String)
     url: string;
+
+    @Field(type => [String], { nullable: true })
+    tags: string[];
 }

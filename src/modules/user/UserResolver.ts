@@ -51,9 +51,9 @@ export class UserResolver {
             throw new Error("Could not find user");
         }
 
-        /*if (!user.confirmed) {
+        if (!user.confirmed) {
             throw new Error("The user must be confirmed");
-        }*/
+        }
 
         const valid = await compare(password, user.password);
 

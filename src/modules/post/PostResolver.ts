@@ -13,6 +13,7 @@ export class PostResolver {
     @UseMiddleware(isAuth)
     async myPosts(@Ctx() { payload }: Context): Promise<Post[]> {
         let posts: Post[];
+
         try {
             const user = await User.findOne({ where: { id: payload!.userId } });
             posts = await Post.find({ where: { user }, relations: ["tags"] });
@@ -22,6 +23,21 @@ export class PostResolver {
         }
 
         return posts
+    }
+
+    @Query(returns => [Post])
+    @UseMiddleware(isAuth)
+    async allPosts(): Promise<Post[]> {
+        let posts: Post[];
+
+        try {
+            posts = await Post.find({ relations: ["tags", "user"] });
+        } catch (err) {
+            console.log(err);
+            return posts;
+        }
+
+        return posts;
     }
 
     @Mutation(returns => Boolean)

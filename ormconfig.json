@@ -31,7 +31,7 @@
       "host": "localhost",
       "port": 3306,
       "username": "root",
-      "password": "",
+      "password": "vertical601",
       "database": "shareTutsDev",
       "synchronize": false,
       "dropSchema": false,

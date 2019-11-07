@@ -7,16 +7,21 @@ import * as session from "express-session";
 import * as cors from "cors";
 import { ApolloServer } from "apollo-server";
 import { createTypeormConnection } from "./utils/CreateTypeormConnection";
+import { redis } from "./utils/Redis";
+import * as connectRedis from "connect-redis";
 
 (async () => {
     const app = express();
+    const RedisStore = connectRedis(session);
 
     app.use(cookieParser());
     app.use(cors());
     app.use(session({
-        //store: "",
+        store: new RedisStore({
+            client: redis as any
+        }),
         name: "qid",
-        secret: "FjXcJ0I2ThdmUOFSUdS1VFRexkhCMHyx",
+        secret: process.env.SESSION_SECRET!,
         resave: false,
         saveUninitialized: false,
         cookie: {
@@ -32,7 +37,16 @@ import { createTypeormConnection } from "./utils/CreateTypeormConnection";
 
     const server = new ApolloServer({
         schema,
-        context: ({ req, res }) => ({ req, res })
+        context: ({ req, res }) => ({ req, res }),
+        formatError: error => {
+            const { message, extensions, path } = error;
+            return {
+                message,
+                code: extensions.code,
+                path
+            };
+        }
+
     });
 
     const { url } = await server.listen(4000);

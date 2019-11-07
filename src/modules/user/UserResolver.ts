@@ -7,6 +7,10 @@ import { createAccessToken } from '../../utils/Auth';
 import { Context } from '../../utils/Context';
 import { LoginResponse } from './types/LoginResponse';
 import { UserInput } from './types/UserInput';
+import { redis } from "../../utils/Redis";
+import { confirmUserPrefix } from '../constants/redisPrefixes';
+import { sendEmail } from '../utils/SendEmail';
+import { createConfirmationUrl } from '../utils/CreateConfirmationUrl';
 
 @Resolver(of => User)
 export class UserResolver {
@@ -26,9 +30,11 @@ export class UserResolver {
         const hashedPassword = await hash(userInput.password, 12);
 
         try {
-            await User.insert({
+            const user = await User.create({
                 ...userInput, password: hashedPassword
-            });
+            }).save();
+
+            await sendEmail(userInput.email, await createConfirmationUrl(user.id));
         } catch (err) {
             console.log(err);
             return false;
@@ -59,5 +65,17 @@ export class UserResolver {
             accessToken: createAccessToken(user),
             user
         }
+    }
+
+    @Mutation(returns => Boolean)
+    async confirmUser(@Arg("token") token: string): Promise<boolean> {
+        const userId = await redis.get(`${confirmUserPrefix}${token}`);
+
+        if (!userId) return false;
+
+        await User.update({ id: userId }, { confirmed: true });
+        await redis.del(token);
+
+        return true;
     }
 }

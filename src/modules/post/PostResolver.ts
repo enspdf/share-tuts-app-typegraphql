@@ -16,7 +16,7 @@ export class PostResolver {
 
         try {
             const user = await User.findOne({ where: { id: payload!.userId } });
-            posts = await Post.find({ where: { user }, relations: ["tags"] });
+            posts = await Post.find({ where: { user }, relations: ["tags", "user"] });
         } catch (err) {
             console.log(err);
             return posts;
@@ -31,7 +31,7 @@ export class PostResolver {
         let posts: Post[];
 
         try {
-            posts = await Post.find({ relations: ["tags", "user"] });
+            posts = await Post.find({ where: { private: false }, relations: ["tags", "user"] });
         } catch (err) {
             console.log(err);
             return posts;
@@ -51,6 +51,19 @@ export class PostResolver {
             await Post.create({
                 ...postInput, user, tags
             }).save();
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+
+        return true;
+    }
+
+    @Mutation(returns => Boolean)
+    @UseMiddleware(isAuth)
+    async deletePost(@Arg("postId") postId: string, @Ctx() { payload }: Context): Promise<boolean> {
+        try {
+            await Post.delete({ id: postId,  });
         } catch (err) {
             console.log(err);
             return false;

@@ -36,6 +36,10 @@ export class Post extends BaseEntity {
     @JoinTable()
     tags: Tag[];
 
+    @Field(type => Boolean)
+    @Column("boolean", { default: true })
+    private: boolean;
+
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     creationDate: Date;
 }

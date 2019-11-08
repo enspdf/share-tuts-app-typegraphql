@@ -27,6 +27,15 @@ export class TagResolver {
         return await Tag.create({ name }).save();
     }
 
+    @Mutation(returns => Tag)
+    @UseMiddleware(isAuth)
+    async updateTag(@Arg("tagId") tagId: string, @Arg("name") name: string):Promise<Tag> {
+        let tagToUpdate = await Tag.findOne({ where: {id: tagId} });
+        tagToUpdate.name = name;
+
+        return await Tag.save(tagToUpdate);
+    }
+
     @Mutation(returns => Boolean)
     @UseMiddleware(isAuth)
     async deleteTag(@Arg("tagId") tagId: string): Promise<boolean> {

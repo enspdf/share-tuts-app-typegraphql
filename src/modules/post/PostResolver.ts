@@ -15,8 +15,11 @@ export class PostResolver {
         let posts: Post[];
 
         try {
-            const user = await User.findOne({ where: { id: payload!.userId } });
-            posts = await Post.find({ where: { user }, relations: ["tags", "user"] });
+            posts = await Post.createQueryBuilder("post")
+                .innerJoinAndSelect("post.user", "user")
+                .innerJoinAndSelect("post.tags", "tag")
+                .where("post.userId = :userId", { userId: payload!.userId })
+                .getMany();
         } catch (err) {
             console.log(err);
             return posts;
@@ -31,7 +34,11 @@ export class PostResolver {
         let posts: Post[];
 
         try {
-            posts = await Post.find({ where: { private: false }, relations: ["tags", "user"] });
+            posts = await Post.createQueryBuilder("post")
+                .innerJoinAndSelect("post.user", "user")
+                .innerJoinAndSelect("post.tags", "tag")
+                .where("post.private = false")
+                .getMany();
         } catch (err) {
             console.log(err);
             return posts;
@@ -45,8 +52,9 @@ export class PostResolver {
     async createPost(@Arg("post") postInput: PostInput, @Ctx() { payload }: Context): Promise<boolean> {
         try {
             const user = await User.findOne({ where: { id: payload!.userId } });
-            // const tags = await Tag.findByIds(postInput.tags);
-            const tags = await Tag.find({ id: In([postInput.tags]) });
+            const tags = await Tag.createQueryBuilder()
+                .whereInIds(postInput.tags)
+                .getMany();
 
             await Post.create({
                 ...postInput, user, tags
@@ -63,7 +71,7 @@ export class PostResolver {
     @UseMiddleware(isAuth)
     async deletePost(@Arg("postId") postId: string, @Ctx() { payload }: Context): Promise<boolean> {
         try {
-            await Post.delete({ id: postId,  });
+            await Post.delete({ id: postId, });
         } catch (err) {
             console.log(err);
             return false;

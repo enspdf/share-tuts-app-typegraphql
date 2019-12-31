@@ -1,14 +1,14 @@
 import { createSchema } from './utils/CreateSchema';
 import "dotenv/config";
 import "reflect-metadata";
-import * as express from "express";
-import * as cookieParser from "cookie-parser";
-import * as session from "express-session";
-import * as cors from "cors";
+import express from "express";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import cors from "cors";
 import { ApolloServer } from "apollo-server";
 import { createTypeormConnection } from "./utils/CreateTypeormConnection";
 import { redis } from "./utils/Redis";
-import * as connectRedis from "connect-redis";
+import connectRedis from "connect-redis";
 
 (async () => {
     const app = express();
@@ -21,7 +21,7 @@ import * as connectRedis from "connect-redis";
             client: redis as any
         }),
         name: "qid",
-        secret: process.env.SESSION_SECRET!,
+        secret: process.env.SESSION_SECRET! || "SESSION_SECRET",
         resave: false,
         saveUninitialized: false,
         cookie: {

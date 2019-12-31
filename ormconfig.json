@@ -31,11 +31,11 @@
       "host": "localhost",
       "port": 3306,
       "username": "root",
-      "password": "vertical601",
+      "password": "",
       "database": "shareTutsDev",
       "synchronize": false,
       "dropSchema": false,
-      "logging": false,
+      "logging": true,
       "entities": [
          "src/entity/**/*.ts"
       ],

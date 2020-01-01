@@ -1,8 +1,8 @@
-import { PostType } from './PostType';
 import { InputType, Field } from "type-graphql";
+import { PostTypeEnum } from "./PostTypeEnum.enum";
 
 @InputType()
-export class PostInput {
+export class GenericPost {
     @Field(type => String)
     title: string;
 
@@ -10,11 +10,8 @@ export class PostInput {
     description: string;
 
     @Field(type => String)
-    type: PostType;
+    type: PostTypeEnum;
 
     @Field(type => String)
     url: string;
-
-    @Field(type => [String], { nullable: true })
-    tags: string[];
 }

@@ -9,13 +9,18 @@ import { ApolloServer } from "apollo-server";
 import { createTypeormConnection } from "./utils/CreateTypeormConnection";
 import { redis } from "./utils/Redis";
 import connectRedis from "connect-redis";
+import { Container } from "typedi";
+import { useContainer } from "typeorm";
+
+useContainer(Container);
 
 (async () => {
     const app = express();
     const RedisStore = connectRedis(session);
+    const PORT = process.env.PORT || 4000;
 
     app.use(cookieParser());
-    app.use(cors());
+    app.use(cors({ credentials: true }));
     app.use(session({
         store: new RedisStore({
             client: redis as any
@@ -32,7 +37,6 @@ import connectRedis from "connect-redis";
     }));
 
     await createTypeormConnection();
-
     const schema = await createSchema();
 
     const server = new ApolloServer({
@@ -49,6 +53,6 @@ import connectRedis from "connect-redis";
 
     });
 
-    const { url } = await server.listen(4000);
+    const { url } = await server.listen(PORT);
     console.log(`Server is running, GraphQL available at ${url}`);
 })();

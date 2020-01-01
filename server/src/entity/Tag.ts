@@ -1,17 +1,22 @@
-import { BaseEntity, PrimaryGeneratedColumn, Column, Entity } from "typeorm";
+import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Column, Entity } from "typeorm";
 import { ObjectType, Field, ID } from "type-graphql";
 
 @Entity("tags")
 @ObjectType()
-export class Tag extends BaseEntity {
+export class Tag {
     @Field(type => ID)
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Field()
+    @Field(type => String)
     @Column("varchar", { length: 255 })
     name: string;
 
-    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    creationDate: Date;
+    @Field(type => String)
+    @CreateDateColumn({ readonly: true })
+    createdAt: String;
+
+    @Field(type => String)
+    @UpdateDateColumn({ readonly: true })
+    updatedAt: String;
 }

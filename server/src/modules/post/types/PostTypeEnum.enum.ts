@@ -1,4 +1,4 @@
-export enum PostType {
+export enum PostTypeEnum {
     Post = "Post",
     Video = "Video"
-}
+};

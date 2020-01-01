@@ -1,24 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { Post } from "./Post";
 
 import { ObjectType, Field, ID } from "type-graphql";
 
 @Entity("users")
 @ObjectType()
-export class User extends BaseEntity {
+export class User {
     @Field(type => ID)
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Field()
+    @Field(type => String)
     @Column("varchar")
     firstName: string;
 
-    @Field()
+    @Field(type => String)
     @Column("varchar")
     lastName: string;
 
-    @Field()
+    @Field(type => String)
     @Column("varchar", { length: 255, unique: true })
     email: string;
 
@@ -29,11 +29,14 @@ export class User extends BaseEntity {
     @Column("boolean", { default: false })
     confirmed: boolean;
 
-    @OneToMany(() => Post, post => post.user)
+    @OneToMany(type => Post, post => post.user)
     posts: Post[];
 
-    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    creationDate: Date;
+    @CreateDateColumn({ readonly: true })
+    createdAt: String;
+
+    @UpdateDateColumn({ readonly: true })
+    updatedAt: String;
 
     @Column("int", { default: 0 })
     tokenVersion: number;

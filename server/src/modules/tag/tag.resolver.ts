@@ -23,13 +23,13 @@ export class TagResolver {
 
     @Mutation(returns => Tag)
     @UseMiddleware(isAuth)
-    async createTag(@Arg("name") name: string): Promise<Tag> {
+    async createTag(@Arg("name") name: string): Promise<Boolean> {
         return this.tagService.createTag(name);
     }
 
     @Mutation(returns => Tag)
     @UseMiddleware(isAuth)
-    async updateTag(@Arg("id") tagId: string, @Arg("name") name: string): Promise<Tag> {
+    async updateTag(@Arg("id") tagId: string, @Arg("name") name: string): Promise<Boolean> {
         return this.tagService.updateTag(tagId, name);
     }
 

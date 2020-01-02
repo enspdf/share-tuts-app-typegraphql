@@ -32,7 +32,7 @@ export class Post {
     user: User;
 
     @Field(type => [Tag], { nullable: true })
-    @ManyToMany(() => Tag)
+    @ManyToMany(() => Tag, { nullable: true })
     @JoinTable()
     tags: Tag[];
 

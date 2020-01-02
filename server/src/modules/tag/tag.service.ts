@@ -11,11 +11,16 @@ export class TagService {
     ) { }
 
     async getTags(): Promise<Tag[]> {
-        return this.tagRepository.find();
+        return this.tagRepository
+            .createQueryBuilder()
+            .getMany();
     }
 
     async getTagById(tagId: string): Promise<Tag> {
-        const tag: Tag = await this.tagRepository.findOne({ where: { id: tagId } });
+        const tag: Tag = await this.tagRepository
+            .createQueryBuilder("tag")
+            .where("tag.id = :tagId", { tagId })
+            .getOne();
 
         if (!tag) {
             throw new Error("Tag Not Found");
@@ -24,19 +29,46 @@ export class TagService {
         return tag;
     }
 
-    async createTag(name: string): Promise<Tag> {
-        return await this.tagRepository.save({ name });
+    async createTag(name: string): Promise<Boolean> {
+        try {
+            await this.tagRepository
+                .createQueryBuilder()
+                .insert()
+                .into(Tag)
+                .values({ name })
+                .execute();
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+
+        return true;
     }
 
-    async updateTag(tagId: string, name: string): Promise<Tag> {
-        let tagToUpdate = await this.tagRepository.findOne({ where: { id: tagId } });
+    async updateTag(tagId: string, name: string): Promise<Boolean> {
+        try {
+            await this.tagRepository
+                .createQueryBuilder()
+                .update()
+                .set({ name })
+                .where("id = :tagId", { tagId })
+                .execute();
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
 
-        return await this.tagRepository.save({ ...tagToUpdate, name });
+        return true;
     }
 
     async deleteTag(tagId: string): Promise<Boolean> {
         try {
-            await this.tagRepository.delete({ id: tagId });
+            await this.tagRepository
+                .createQueryBuilder()
+                .delete()
+                .from(Tag)
+                .where("id = :tagId", { tagId })
+                .execute();
         } catch (err) {
             console.log(err);
             return false;

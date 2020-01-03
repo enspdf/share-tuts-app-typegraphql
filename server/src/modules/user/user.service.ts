@@ -1,3 +1,5 @@
+import { createRefreshToken, sendRefreshToken } from './../../utils/Auth';
+import { Response } from 'express';
 import { UserInput } from './types/UserInput.input';
 import { User } from './../../entity/User';
 import { Service } from "typedi";
@@ -47,7 +49,18 @@ export class UserService {
         return true;
     }
 
-    async login(email: string, password: string): Promise<LoginResponse> {
+    async revokeRefreshTokenForUser(userId: string): Promise<Boolean> {
+        try {
+            await this.userRepository.increment({ id: userId }, "tokenVersion", 1);
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+
+        return true;
+    }
+
+    async login(email: string, password: string, res: Response): Promise<LoginResponse> {
         const user = await this.userRepository
             .createQueryBuilder("user")
             .where("user.email = :email", { email })
@@ -67,10 +80,18 @@ export class UserService {
             throw new Error("Invalid password");
         }
 
+        sendRefreshToken(res, createRefreshToken(user));
+
         return {
             accessToken: createAccessToken(user),
             user
         }
+    }
+
+    async logout(res: Response): Promise<Boolean> {
+        sendRefreshToken(res, "");
+
+        return true;
     }
 
     async confirmUser(token: string): Promise<Boolean> {

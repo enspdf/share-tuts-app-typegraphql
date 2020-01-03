@@ -23,9 +23,19 @@ export class UserResolver {
         return this.userService.register(userInput);
     }
 
+    @Mutation(returns =>Boolean)
+    async revokeRefreshTokenForUser(@Arg("userId") userId: string):Promise<Boolean>{
+        return this.userService.revokeRefreshTokenForUser(userId);
+    }
+
     @Mutation(returns => LoginResponse)
-    async login(@Arg("email") email: string, @Arg("password") password: string): Promise<LoginResponse> {
-        return this.userService.login(email, password);
+    async login(@Arg("email") email: string, @Arg("password") password: string, @Ctx() { res }: Context): Promise<LoginResponse> {
+        return this.userService.login(email, password, res);
+    }
+
+    @Mutation(returns => Boolean)
+    async logout(@Ctx() { res }: Context): Promise<Boolean> {
+        return this.userService.logout(res);
     }
 
     @Mutation(returns => Boolean)

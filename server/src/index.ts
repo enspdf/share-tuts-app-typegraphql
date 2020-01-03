@@ -12,6 +12,7 @@ import connectRedis from "connect-redis";
 import { Container } from "typedi";
 import { useContainer } from "typeorm";
 import { confirmEmail } from "./routes/confirm.route";
+import { refreshToken } from "./routes/token.route";
 
 const RedisStore = connectRedis(session);
 const PORT = process.env.PORT || 4000;
@@ -55,6 +56,7 @@ useContainer(Container);
     }));
 
     app.get("/confirm/:token", confirmEmail);
+    app.post("/refresh_token", refreshToken);
 
     server.applyMiddleware({ app, cors: false });
 

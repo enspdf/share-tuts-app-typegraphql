@@ -1,8 +1,8 @@
 Arguments: 
-  /usr/local/Cellar/node/12.12.0/bin/node /Users/sebastianhiguita/.yarn/bin/yarn.js add -D @types/typeorm-typedi-extensions
+  /usr/local/Cellar/node/12.12.0/bin/node /Users/sebastianhiguita/.yarn/bin/yarn.js add -D @types/apollo-server-express
 
 PATH: 
-  /Users/sebastianhiguita/.yarn/bin:/Users/sebastianhiguita/.config/yarn/global/node_modules/.bin:/Users/sebastianhiguita/flutter/bin:/Users/sebastianhiguita/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/sebastianhiguita/.yarn/bin:/Users/sebastianhiguita/.config/yarn/global/node_modules/.bin:/Users/sebastianhiguita/.sdkman/candidates/micronaut/current/bin:/Users/sebastianhiguita/flutter/bin:/Users/sebastianhiguita/.cargo/bin:/Users/sebastianhiguita/anaconda3/bin:/Users/sebastianhiguita/Library/Android/sdk/tools:/Users/sebastianhiguita/Library/Android/sdk/platform-tool:/usr/local/mysql/bin:/Users/sebastianhiguita/anaconda3/bin:/Users/sebastianhiguita/Library/Android/sdk/tools:/Users/sebastianhiguita/Library/Android/sdk/platform-tool:/usr/local/mysql/bin
+  /Users/sebastianhiguita/.yarn/bin:/Users/sebastianhiguita/.config/yarn/global/node_modules/.bin:/Users/sebastianhiguita/.sdkman/candidates/micronaut/current/bin:/Users/sebastianhiguita/flutter/bin:/Users/sebastianhiguita/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/sebastianhiguita/anaconda3/bin:/Users/sebastianhiguita/Library/Android/sdk/tools:/Users/sebastianhiguita/Library/Android/sdk/platform-tool:/usr/local/mysql/bin
 
 Yarn version: 
   1.21.1
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@types%2ftypeorm-typedi-extensions: Not found
+  Error: https://registry.yarnpkg.com/@types%2fapollo-server-express: Not found
       at Request.params.callback [as _callback] (/Users/sebastianhiguita/.yarn/lib/cli.js:66947:18)
       at Request.self.callback (/Users/sebastianhiguita/.yarn/lib/cli.js:140665:22)
       at Request.emit (events.js:210:5)
@@ -33,6 +33,7 @@ npm manifest:
      "description": "Awesome project developed with TypeORM.",
      "devDependencies": {
         "@types/bcryptjs": "^2.4.2",
+        "@types/connect-redis": "0.0.13",
         "@types/cookie-parser": "^1.4.2",
         "@types/cors": "^2.8.6",
         "@types/dotenv": "^8.2.0",
@@ -50,6 +51,7 @@ npm manifest:
      },
      "dependencies": {
         "apollo-server": "^2.9.15",
+        "apollo-server-express": "^2.9.15",
         "bcryptjs": "^2.4.3",
         "connect-redis": "^4.0.3",
         "cookie-parser": "^1.4.4",
@@ -185,6 +187,16 @@ Lockfile:
       "@types/connect" "*"
       "@types/node" "*"
   
+  "@types/connect-redis@0.0.13":
+    version "0.0.13"
+    resolved "https://registry.yarnpkg.com/@types/connect-redis/-/connect-redis-0.0.13.tgz#9237f7f57b79d9f6418993fd6f3b6ea923859079"
+    integrity sha512-bHo/UWrUPbWkn05D1YAMs31wG+0dMt6GYXjv8Vfu8kAxO6CfD4N6lmHv/sAkjzYVdXFhc5jck/kEYLBDPJ90iQ==
+    dependencies:
+      "@types/express" "*"
+      "@types/express-session" "*"
+      "@types/ioredis" "*"
+      "@types/redis" "*"
+  
   "@types/connect@*":
     version "3.4.32"
     resolved "https://registry.yarnpkg.com/@types/connect/-/connect-3.4.32.tgz#aa0e9616b9435ccad02bc52b5b454ffc2c70ba28"
@@ -236,7 +248,7 @@ Lockfile:
       "@types/node" "*"
       "@types/range-parser" "*"
   
-  "@types/express-session@^1.15.16":
+  "@types/express-session@*", "@types/express-session@^1.15.16":
     version "1.15.16"
     resolved "https://registry.yarnpkg.com/@types/express-session/-/express-session-1.15.16.tgz#91ba1f47a2fc2088811e8d7c17702ec92d8a8b23"
     integrity sha512-vWQpNt9t/zc4bTX+Ow5powZb9n3NwOM0SYsAJ7PYj5vliB6FA40ye5sW5fZTw8+ekbzJf/sgvtQocf7IryJBJw==
@@ -293,7 +305,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/@types/http-assert/-/http-assert-1.5.1.tgz#d775e93630c2469c2f980fc27e3143240335db3b"
     integrity sha512-PGAK759pxyfXE78NbKxyfRcWYA/KwW17X290cNev/qAsn9eQIxkH4shoNBafH37wewhDG/0p1cHPbK6+SzZjWQ==
   
-  "@types/ioredis@^4.14.3":
+  "@types/ioredis@*", "@types/ioredis@^4.14.3":
     version "4.14.3"
     resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.14.3.tgz#6a6089296d6fb90bbaee96d36b19d480efff026a"
     integrity sha512-WM9xJkP+ckvr8DFy2bFEPWEp7454L/4cBT11qhqPqyzdyZ+8DxUfkf/yo+rQGQJbld0agY2PI5Jb3xxC7KZs6g==
@@ -377,6 +389,13 @@ Lockfile:
     version "1.2.3"
     resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
     integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
+  
+  "@types/redis@*":
+    version "2.8.14"
+    resolved "https://registry.yarnpkg.com/@types/redis/-/redis-2.8.14.tgz#2ed46d0f923f7ccd63fbe73a46a1241e606cf716"
+    integrity sha512-255dzsOLJdXFHBio9/aMHGozNkoiBUgc+g2nlNjbTSp5qcAlmpm4Z6Xs3pKOBLNIKdZbA2BkUxWvYSIwKra0Yw==
+    dependencies:
+      "@types/node" "*"
   
   "@types/semver@^6.0.1":
     version "6.0.2"

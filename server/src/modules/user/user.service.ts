@@ -20,7 +20,10 @@ export class UserService {
 
     async profile(userId: string): Promise<User | null> {
         try {
-            return await this.userRepository.findOne({ where: { id: userId } });
+            return await this.userRepository
+                .createQueryBuilder("user")
+                .where("user.id = :userId", { userId })
+                .getOne();
         } catch (err) {
             console.log(err);
             return null;
@@ -45,7 +48,10 @@ export class UserService {
     }
 
     async login(email: string, password: string): Promise<LoginResponse> {
-        const user = await this.userRepository.findOne({ where: { email } });
+        const user = await this.userRepository
+            .createQueryBuilder("user")
+            .where("user.email = :email", { email })
+            .getOne();
 
         if (!user) {
             throw new Error("Could not find user");
@@ -69,11 +75,16 @@ export class UserService {
 
     async confirmUser(token: string): Promise<Boolean> {
         const userId = await redis.get(`${confirmUserPrefix}${token}`);
-        console.log(userId);
 
         if (!userId) return false;
 
-        await this.userRepository.update({ id: userId }, { confirmed: true });
+        await this.userRepository
+            .createQueryBuilder()
+            .update()
+            .set({ confirmed: true })
+            .where("id = :userId", { userId })
+            .execute();
+
         await redis.del(token);
 
         return true;

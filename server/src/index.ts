@@ -5,19 +5,37 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import cors from "cors";
-import { ApolloServer } from "apollo-server";
+import { ApolloServer } from "apollo-server-express";
 import { createTypeormConnection } from "./utils/CreateTypeormConnection";
 import { redis } from "./utils/Redis";
 import connectRedis from "connect-redis";
 import { Container } from "typedi";
 import { useContainer } from "typeorm";
+import { confirmEmail } from "./routes/confirm.route";
+
+const RedisStore = connectRedis(session);
+const PORT = process.env.PORT || 4000;
 
 useContainer(Container);
 
 (async () => {
+
+    await createTypeormConnection();
+
     const app = express();
-    const RedisStore = connectRedis(session);
-    const PORT = process.env.PORT || 4000;
+
+    const server = new ApolloServer({
+        schema: await createSchema(),
+        context: ({ req, res }) => ({ req, res }),
+        formatError: error => {
+            const { message, extensions, path } = error;
+            return {
+                message,
+                code: extensions.code,
+                path
+            };
+        }
+    });
 
     app.use(cookieParser());
     app.use(cors({ credentials: true }));
@@ -36,23 +54,11 @@ useContainer(Container);
         }
     }));
 
-    await createTypeormConnection();
-    const schema = await createSchema();
+    app.get("/confirm/:token", confirmEmail);
 
-    const server = new ApolloServer({
-        schema,
-        context: ({ req, res }) => ({ req, res }),
-        formatError: error => {
-            const { message, extensions, path } = error;
-            return {
-                message,
-                code: extensions.code,
-                path
-            };
-        }
+    server.applyMiddleware({ app, cors: false });
 
+    const nodeServer = app.listen(PORT, () => {
+        console.log(`Server is running, GraphQL available at http://localhost:${PORT}${server.graphqlPath}`);
     });
-
-    const { url } = await server.listen(PORT);
-    console.log(`Server is running, GraphQL available at ${url}`);
 })();
